@@ -106,7 +106,7 @@ TH1D* Divide(TH1D*h1, TH1D*h2, string name){
     return h3;
 }
 
-void histmaker(){
+void histmaker_data(){
 
     /////////////////////////////
     /////////////////////////////
@@ -116,9 +116,7 @@ void histmaker(){
     /////////////////////////////
     /////////////////////////////
 
-    //Angantyr: /data00/OOsamples/Skims20250704/20250704_HiForest_250520_Pythia_Angantyr_OO_OO_5362GeV_250626.root
-    //Hijing: /data00/OOsamples/Skims20250704/skim_HiForest_250520_Hijing_MinimumBias_b015_OO_5362GeV_250518.root
-    TFile* f = new TFile("/data00/OOsamples/Skims20250704/skim_HiForest_250520_Hijing_MinimumBias_b015_OO_5362GeV_250518.root");
+    TFile* f = new TFile(""); //replace with data
     TTree* T = (TTree*)f->Get("Tree"); 
 
     /////////////////////////////
@@ -133,6 +131,11 @@ void histmaker(){
     TCut PVcut("PVFilter == 1");
     TCut CCcut("ClusterCompatibilityFilter == 1");
     TCut Nvtxcut("nVtx > 0");
+    TCut zeroBias("Triggerbitforzerobias == 1"); //replace
+    TCut online14OR("Triggerbitforonline14OR == 1"); //replace
+    TCut online16OR("Triggerbitforonline16OR == 1"); //replace
+    TCut online14AND("Triggerbitforonline14AND == 1"); //replace
+    TCut online16AND("Triggerbitforonline16AND == 1"); //replace
     // use HFONLINE and HFOFFLINE functions for a tcut
     // use TRKPT for track pt cuts
 
@@ -142,36 +145,53 @@ void histmaker(){
     TCut eventsel_pt2 = eventsel && TRKPTCUT(2.0);
     TCut eventsel_pt3 = eventsel && TRKPTCUT(3.0);
     TCut eventsel_pt4 = eventsel && TRKPTCUT(4.0);
-    TCut event_online14AND = eventsel && HFONLINE(14, "&&");
+    /*TCut event_online14AND = eventsel && HFONLINE(14, "&&");
     TCut event_online14AND_pt2 = event_online14AND && TRKPTCUT(2.0);
     TCut event_online14AND_pt3 = event_online14AND && TRKPTCUT(3.0);
-    TCut event_online14AND_pt4 = event_online14AND && TRKPTCUT(4.0);
+    TCut event_online14AND_pt4 = event_online14AND && TRKPTCUT(4.0);*/
+    TCut event_online14AND_data = eventsel && online14AND;
+    TCut event_online14AND_pt2_data = event_online14AND_data && TRKPTCUT(2.0);
+    TCut event_online14AND_pt3_data = event_online14AND_data && TRKPTCUT(3.0);
+    TCut event_online14AND_pt4_data = event_online14AND_data && TRKPTCUT(4.0);
 
-    TCut event_online14OR = eventsel && HFONLINE(14, "||");
+    /*TCut event_online14OR = eventsel && HFONLINE(14, "||");
     TCut event_online14OR_pt2 = event_online14OR && TRKPTCUT(2.0);
     TCut event_online14OR_pt3 = event_online14OR && TRKPTCUT(3.0);
-    TCut event_online14OR_pt4 = event_online14OR && TRKPTCUT(4.0);
+    TCut event_online14OR_pt4 = event_online14OR && TRKPTCUT(4.0);*/
+    TCut event_online14OR_data = eventsel && online14OR;
+    TCut event_online14OR_pt2_data = event_online14OR_data && TRKPTCUT(2.0);
+    TCut event_online14OR_pt3_data = event_online14OR_data && TRKPTCUT(3.0);
+    TCut event_online14OR_pt4_data = event_online14OR_data && TRKPTCUT(4.0); 
 
-    TCut event_online16AND = eventsel && HFONLINE(16, "&&");
+    /*TCut event_online16AND = eventsel && HFONLINE(16, "&&");
     TCut event_online16AND_pt2 = event_online16AND && TRKPTCUT(2.0);
     TCut event_online16AND_pt3 = event_online16AND && TRKPTCUT(3.0);
-    TCut event_online16AND_pt4 = event_online16AND && TRKPTCUT(4.0);
+    TCut event_online16AND_pt4 = event_online16AND && TRKPTCUT(4.0);*/
+    TCut event_online16AND_data = eventsel && online16AND;
+    TCut event_online16AND_pt2_data = event_online16AND_data && TRKPTCUT(2.0);
+    TCut event_online16AND_pt3_data = event_online16AND_data && TRKPTCUT(3.0);
+    TCut event_online16AND_pt4_data = event_online16AND_data && TRKPTCUT(4.0);
 
-    TCut event_online16OR = eventsel && HFONLINE(16, "||");
+    /*TCut event_online16OR = eventsel && HFONLINE(16, "||");
     TCut event_online16OR_pt2 = event_online16OR && TRKPTCUT(2.0);
     TCut event_online16OR_pt3 = event_online16OR && TRKPTCUT(3.0);
-    TCut event_online16OR_pt4 = event_online16OR && TRKPTCUT(4.0);
+    TCut event_online16OR_pt4 = event_online16OR && TRKPTCUT(4.0);*/
+    TCut event_online16OR_data = eventsel && online16OR;
+    TCut event_online16OR_pt2_data = event_online16OR_data && TRKPTCUT(2.0);
+    TCut event_online16OR_pt3_data = event_online16OR_data && TRKPTCUT(3.0);
+    TCut event_online16OR_pt4_data = event_online16OR_data && TRKPTCUT(4.0);
 
 
-    TCut wp16OR = eventsel && HFONLINE(16, "||") && HFOFFLINE(19,"||");
+
+    /*TCut wp16OR = eventsel && HFONLINE(16, "||") && HFOFFLINE(19,"||"); could be replaced later with working points from data
     TCut wp16AND = eventsel && HFONLINE(16, "&&") && HFOFFLINE(20,"&&");
     TCut wp14OR = eventsel && HFONLINE(14, "||") && HFOFFLINE(13.5,"||");
     TCut wp14AND = eventsel && HFONLINE(14, "&&") && HFOFFLINE(14,"&&");
 
     TCut wp16OR_pt3 = eventsel && HFONLINE(16, "||") && HFOFFLINE(18,"||") && TRKPTCUT(3.0);
     TCut wp16AND_pt3 = eventsel && HFONLINE(16, "&&") && HFOFFLINE(19.5,"&&") && TRKPTCUT(3.0);
-    TCut wp14OR_pt3 = eventsel && HFONLINE(14, "||") && HFOFFLINE(12,"||") && TRKPTCUT(3.0);//fix!!
-    TCut wp14AND_pt3 = eventsel && HFONLINE(14, "&&") && HFOFFLINE(12.5,"&&") && TRKPTCUT(3.0);
+    TCut wp14OR_pt3 = eventsel && HFONLINE(14, "||") && HFOFFLINE(12,"||") && TRKPTCUT(3.0);
+    TCut wp14AND_pt3 = eventsel && HFONLINE(14, "&&") && HFOFFLINE(12.5,"&&") && TRKPTCUT(3.0);*/
 
     /*TCut pure_online14OR = HFONLINE(14, "||");
     TCut pure_online16OR = HFONLINE(16, "||");
@@ -208,10 +228,10 @@ void histmaker(){
     HFEMax_Minimum(T, eventsel_pt2, minHFEMaxEventpt2);
     HFEMax_Minimum(T, eventsel_pt3, minHFEMaxEventpt3);
     HFEMax_Minimum(T, eventsel_pt4, minHFEMaxEventpt4);
-    HFEMax_Minimum(T, event_online14AND, minHFEMaxEventOnline14AND);
-    HFEMax_Minimum(T, event_online14AND_pt2, minHFEMaxEventOnline14ANDpt2);
-    HFEMax_Minimum(T, event_online14AND_pt3, minHFEMaxEventOnline14ANDpt3);
-    HFEMax_Minimum(T, event_online14AND_pt4, minHFEMaxEventOnline14ANDpt4);
+    HFEMax_Minimum(T, event_online14AND_data, minHFEMaxEventOnline14AND);
+    HFEMax_Minimum(T, event_online14AND_pt2_data, minHFEMaxEventOnline14ANDpt2);
+    HFEMax_Minimum(T, event_online14AND_pt3_data, minHFEMaxEventOnline14ANDpt3);
+    HFEMax_Minimum(T, event_online14AND_pt4_data, minHFEMaxEventOnline14ANDpt4);
 
     TH1D* ratio14AND = Divide(minHFEMaxEventOnline14AND, minHFEMaxEvent, "ratio14AND");
     TH1D* ratio14ANDpt2 = Divide(minHFEMaxEventOnline14ANDpt2, minHFEMaxEventpt2, "ratio14ANDpt2");
@@ -231,10 +251,10 @@ void histmaker(){
     HFEMax_Maximum(T, eventsel_pt2, maxHFEMaxEventpt2);
     HFEMax_Maximum(T, eventsel_pt3, maxHFEMaxEventpt3);
     HFEMax_Maximum(T, eventsel_pt4, maxHFEMaxEventpt4);
-    HFEMax_Maximum(T, event_online14OR, maxHFEMaxEventOnline14OR);
-    HFEMax_Maximum(T, event_online14OR_pt2, maxHFEMaxEventOnline14ORpt2);
-    HFEMax_Maximum(T, event_online14OR_pt3, maxHFEMaxEventOnline14ORpt3);
-    HFEMax_Maximum(T, event_online14OR_pt4, maxHFEMaxEventOnline14ORpt4);
+    HFEMax_Maximum(T, event_online14OR_data, maxHFEMaxEventOnline14OR);
+    HFEMax_Maximum(T, event_online14OR_pt2_data, maxHFEMaxEventOnline14ORpt2);
+    HFEMax_Maximum(T, event_online14OR_pt3_data, maxHFEMaxEventOnline14ORpt3);
+    HFEMax_Maximum(T, event_online14OR_pt4_data, maxHFEMaxEventOnline14ORpt4);
 
     TH1D* ratio14OR = Divide(maxHFEMaxEventOnline14OR, maxHFEMaxEvent, "ratio14OR");
     TH1D* ratio14ORpt2 = Divide(maxHFEMaxEventOnline14ORpt2, maxHFEMaxEventpt2, "ratio14ORpt2");
@@ -246,10 +266,10 @@ void histmaker(){
     TH1D* minHFEMaxEventOnline16ANDpt3 = new TH1D("minHFEMaxevent_online16AND_pt3", "HFEMax min with event and online 16 AND pt > 3 selection", 101, -0.5, 200.5);
     TH1D* minHFEMaxEventOnline16ANDpt4 = new TH1D("minHFEMaxevent_online16AND_pt4", "HFEMax min with event and online 16 AND pt > 4 selection", 101, -0.5, 200.5);
 
-    HFEMax_Minimum(T, event_online16AND, minHFEMaxEventOnline16AND);
-    HFEMax_Minimum(T, event_online16AND_pt2, minHFEMaxEventOnline16ANDpt2);
-    HFEMax_Minimum(T, event_online16AND_pt3, minHFEMaxEventOnline16ANDpt3);
-    HFEMax_Minimum(T, event_online16AND_pt4, minHFEMaxEventOnline16ANDpt4);
+    HFEMax_Minimum(T, event_online16AND_data, minHFEMaxEventOnline16AND);
+    HFEMax_Minimum(T, event_online16AND_pt2_data, minHFEMaxEventOnline16ANDpt2);
+    HFEMax_Minimum(T, event_online16AND_pt3_data, minHFEMaxEventOnline16ANDpt3);
+    HFEMax_Minimum(T, event_online16AND_pt4_data, minHFEMaxEventOnline16ANDpt4);
 
     TH1D* ratio16AND = Divide(minHFEMaxEventOnline16AND, minHFEMaxEvent, "ratio16AND");
     TH1D* ratio16ANDpt2 = Divide(minHFEMaxEventOnline16ANDpt2, minHFEMaxEventpt2, "ratio16ANDpt2");
@@ -261,10 +281,10 @@ void histmaker(){
     TH1D* maxHFEMaxEventOnline16ORpt3 = new TH1D("maxHFEMaxevent_online16OR_pt3", "HFEMax max with event and online 16 OR pt > 3 selection", 101, -0.5, 200.5);
     TH1D* maxHFEMaxEventOnline16ORpt4 = new TH1D("maxHFEMaxevent_online16OR_pt4", "HFEMax max with event and online 16 OR pt > 4 selection", 101, -0.5, 200.5); 
 
-    HFEMax_Maximum(T, event_online16OR, maxHFEMaxEventOnline16OR);
-    HFEMax_Maximum(T, event_online16OR_pt2, maxHFEMaxEventOnline16ORpt2);
-    HFEMax_Maximum(T, event_online16OR_pt3, maxHFEMaxEventOnline16ORpt3);
-    HFEMax_Maximum(T, event_online16OR_pt4, maxHFEMaxEventOnline16ORpt4);
+    HFEMax_Maximum(T, event_online16OR_data, maxHFEMaxEventOnline16OR);
+    HFEMax_Maximum(T, event_online16OR_pt2_data, maxHFEMaxEventOnline16ORpt2);
+    HFEMax_Maximum(T, event_online16OR_pt3_data, maxHFEMaxEventOnline16ORpt3);
+    HFEMax_Maximum(T, event_online16OR_pt4_data, maxHFEMaxEventOnline16ORpt4);
 
     TH1D* ratio16OR = Divide(maxHFEMaxEventOnline16OR, maxHFEMaxEvent, "ratio16OR");
     TH1D* ratio16ORpt2 = Divide(maxHFEMaxEventOnline16ORpt2, maxHFEMaxEventpt2, "ratio16ORpt2");
@@ -279,22 +299,22 @@ void histmaker(){
     TH1D* Cent16AND = new TH1D("Cent16AND", ";Centrality;Events", 100, -0.5, 199.5);
     TH1D* Cent14AND = new TH1D("Cent14AND", ";Centrality; Events", 100, -0.5, 199.5);
 
-    Centrality(T, event_online16OR, Cent16OR);
-    Centrality(T, event_online14OR, Cent14OR);
-    Centrality(T, event_online16AND, Cent16AND);   
-    Centrality(T, event_online14AND, Cent14AND);
+    Centrality(T, event_online16OR_data, Cent16OR);
+    Centrality(T, event_online14OR_data, Cent14OR);
+    Centrality(T, event_online16AND_data, Cent16AND);   
+    Centrality(T, event_online14AND_data, Cent14AND);
 
     TH1D* Cent16OR_pt3 = new TH1D("Cent16OR_pt3", ";Centrality;Events", 100, -0.5, 199.5);
     TH1D* Cent14OR_pt3 = new TH1D("Cent14OR_pt3", ";Centrality;Events", 100, -0.5, 199.5);
     TH1D* Cent16AND_pt3 = new TH1D("Cent16AND_pt3", ";Centrality;Events", 100, -0.5, 199.5);
     TH1D* Cent14AND_pt3 = new TH1D("Cent14AND_pt3", ";Centrality;Events", 100, -0.5, 199.5);
 
-    Centrality(T, event_online16OR_pt3, Cent16OR_pt3);
-    Centrality(T, event_online14OR_pt3, Cent14OR_pt3);
-    Centrality(T, event_online16AND_pt3, Cent16AND_pt3);
-    Centrality(T, event_online14AND_pt3, Cent14AND_pt3);    
+    Centrality(T, event_online16OR_pt3_data, Cent16OR_pt3);
+    Centrality(T, event_online14OR_pt3_data, Cent14OR_pt3);
+    Centrality(T, event_online16AND_pt3_data, Cent16AND_pt3);
+    Centrality(T, event_online14AND_pt3_data, Cent14AND_pt3);    
 
-    TH1D* Cent16OR_wp = new TH1D("Cent16OR_wp", ";Centrality;Events", 100, -0.5, 199.5);
+    /*TH1D* Cent16OR_wp = new TH1D("Cent16OR_wp", ";Centrality;Events", 100, -0.5, 199.5);
     TH1D* Cent14OR_wp = new TH1D("Cent14OR_wp", ";Centrality;Events", 100, -0.5, 199.5);
     TH1D* Cent16AND_wp = new TH1D("Cent16AND_wp", ";Centrality;Events", 100, -0.5, 199.5);
     TH1D* Cent14AND_wp = new TH1D("Cent14AND_wp", ";Centrality; Events", 100, -0.5, 199.5);
@@ -322,7 +342,7 @@ void histmaker(){
     TH1D* centratio16ORpt3 = Divide(Cent16OR_wppt3, Cent16OR_pt3, "cent_16OR_pt3");
     TH1D* centratio14ORpt3 = Divide(Cent14OR_wppt3, Cent14OR_pt3, "cent_14OR_pt3");
     TH1D* centratio16ANDpt3 = Divide(Cent16AND_wppt3, Cent16AND_pt3, "cent_16AND_pt3");
-    TH1D* centratio14ANDpt3 = Divide(Cent14AND_wppt3, Cent14AND_pt3, "cent_14AND_pt3");
+    TH1D* centratio14ANDpt3 = Divide(Cent14AND_wppt3, Cent14AND_pt3, "cent_14AND_pt3");*/
 
     /////////////////////////////
     /////////////////////////////
@@ -332,7 +352,7 @@ void histmaker(){
     /////////////////////////////
     /////////////////////////////
 
-    TFile* outfile = new TFile("online.root", "RECREATE");
+    TFile* outfile = new TFile("online_data.root", "RECREATE");
 
     HFEMaxPlusMinusScatter->Write();
     HFEMaxOnlineOfflineANDScatter->Write();
@@ -366,6 +386,36 @@ void histmaker(){
     ratio14ORpt3->Write();
     ratio14ORpt4->Write();
 
+    minHFEMaxEventOnline16AND->Write();
+    minHFEMaxEventOnline16ANDpt2->Write();
+    minHFEMaxEventOnline16ANDpt3->Write();
+    minHFEMaxEventOnline16ANDpt4->Write();
+    ratio16AND->Write();
+    ratio16ANDpt2->Write();
+    ratio16ANDpt3->Write();
+    ratio16ANDpt4->Write();
+
+    maxHFEMaxEventOnline16OR->Write();
+    maxHFEMaxEventOnline16ORpt2->Write();
+    maxHFEMaxEventOnline16ORpt3->Write();
+    maxHFEMaxEventOnline16ORpt4->Write();
+    ratio16OR->Write(); 
+    ratio16ORpt2->Write();
+    ratio16ORpt3->Write();
+    ratio16ORpt4->Write();
+
+    maxHFEMaxEvent->Write();
+    maxHFEMaxEventpt2->Write();
+    maxHFEMaxEventpt3->Write();
+    maxHFEMaxEventpt4->Write();
+    maxHFEMaxEventOnline14OR->Write();
+    maxHFEMaxEventOnline14ORpt2->Write();
+    maxHFEMaxEventOnline14ORpt3->Write();
+    maxHFEMaxEventOnline14ORpt4->Write();
+    ratio14OR->Write();
+    ratio14ORpt2->Write();
+    ratio14ORpt3->Write();
+    ratio14ORpt4->Write();
 
     minHFEMaxEventOnline16AND->Write();
     minHFEMaxEventOnline16ANDpt2->Write();
@@ -385,22 +435,23 @@ void histmaker(){
     ratio16ORpt3->Write();
     ratio16ORpt4->Write();
 
+
     Cent16OR->Write();
     Cent14OR->Write();
     Cent16AND->Write();
     Cent14AND->Write();
 
-    Cent16OR_wp->Write();
+    /*Cent16OR_wp->Write();
     Cent14OR_wp->Write();
     Cent16AND_wp->Write();
-    Cent14AND_wp->Write();
+    Cent14AND_wp->Write();*/
 
     Cent16OR_pt3->Write();
     Cent14OR_pt3->Write();
     Cent16AND_pt3->Write();
     Cent14AND_pt3->Write();
 
-    Cent16OR_wppt3->Write();
+    /*Cent16OR_wppt3->Write();
     Cent16AND_wppt3->Write();       
     Cent14OR_wppt3->Write();
     Cent14AND_wppt3->Write();
@@ -413,8 +464,9 @@ void histmaker(){
     centratio16ORpt3->Write();
     centratio14ORpt3->Write();
     centratio16ANDpt3->Write();
-    centratio14ANDpt3->Write(); 
+    centratio14ANDpt3->Write();*/
 
     outfile->Close();
 }
+
 
