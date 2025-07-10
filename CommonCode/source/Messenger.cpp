@@ -866,7 +866,7 @@ void TriggerTreeMessenger::FillTriggerNames()
    Name.clear();
    Decision.clear();
 
-   // 2025 pO run
+   // 2025 pO and OO run
    Name.push_back("HLT_OxyZeroBias_v1");
    Name.push_back("HLT_OxyZDC1nOR_v1");
    Name.push_back("HLT_OxySingleMuOpen_NotMBHF2OR_v1");
@@ -876,6 +876,12 @@ void TriggerTreeMessenger::FillTriggerNames()
    Name.push_back("HLT_OxyZeroBias_MinPixelCluster400_v1");
    Name.push_back("HLT_MinimumBiasHF_OR_BptxAND_v1");
    Name.push_back("HLT_MinimumBiasHF_AND_BptxAND_v1");
+
+   Name.push_back("HLT_OxySingleJet16_ZDC1nAsymXOR_v1");
+   Name.push_back("HLT_OxySingleJet16_ZDC1nXOR_v1");
+   Name.push_back("HLT_OxySingleJet24_ZDC1nAsymXOR_v1");
+   Name.push_back("HLT_OxySingleJet24_ZDC1nXOR_v1");
+   Name.push_back("HLT_OxyL1SingleJet20_v1");
 
    // 2024 triggers UPCs
    Name.push_back("HLT_HIUPC_ZDC1nOR_MinPixelCluster400_MaxPixelCluster10000_v13");
@@ -3817,6 +3823,10 @@ ChargedHadronRAATreeMessenger::~ChargedHadronRAATreeMessenger()
       delete trkNormChi2;
       delete pfEnergy;
       delete trackWeight;
+      delete trackingEfficiency2017pp;
+      delete trackingEfficiency_Nominal;
+      delete trackingEfficiency_Loose;
+      delete trackingEfficiency_Tight;
 
       if (DebugMode == true) {
          // delete debug related vectors
@@ -3899,6 +3909,10 @@ bool ChargedHadronRAATreeMessenger::Initialize(int saveTriggerBits, bool Debug, 
    trkNormChi2 = nullptr;
    pfEnergy = nullptr;
    trackWeight = nullptr;
+   trackingEfficiency2017pp = nullptr;
+   trackingEfficiency_Nominal = nullptr;
+   trackingEfficiency_Loose = nullptr;
+   trackingEfficiency_Tight = nullptr;
 
    Tree->SetBranchAddress("Run", &Run);
    Tree->SetBranchAddress("Event", &Event);
@@ -3919,6 +3933,9 @@ bool ChargedHadronRAATreeMessenger::Initialize(int saveTriggerBits, bool Debug, 
    Tree->SetBranchAddress("chi2Vtx", &chi2Vtx);
    Tree->SetBranchAddress("ndofVtx", &ndofVtx);
    Tree->SetBranchAddress("nVtx", &nVtx);
+   Tree->SetBranchAddress("nTrk", &nTrk);
+   Tree->SetBranchAddress("multiplicityEta2p4", &multiplicityEta2p4);
+   Tree->SetBranchAddress("multiplicityEta1p0", &multiplicityEta1p0);
    Tree->SetBranchAddress("HFEMaxPlus", &HFEMaxPlus);
    Tree->SetBranchAddress("HFEMaxPlus2", &HFEMaxPlus2);
    Tree->SetBranchAddress("HFEMaxPlus3", &HFEMaxPlus3);
@@ -3958,6 +3975,12 @@ bool ChargedHadronRAATreeMessenger::Initialize(int saveTriggerBits, bool Debug, 
    if(Tree->GetBranch("HLT_MinimumBiasHF_OR_BptxAND_v1"))     Tree->SetBranchAddress("HLT_MinimumBiasHF_OR_BptxAND_v1",   &HLT_MinimumBiasHF_OR_BptxAND_v1);
    if(Tree->GetBranch("HLT_MinimumBiasHF_AND_BptxAND_v1"))    Tree->SetBranchAddress("HLT_MinimumBiasHF_AND_BptxAND_v1",  &HLT_MinimumBiasHF_AND_BptxAND_v1);
 
+   if(Tree->GetBranch("HLT_OxySingleJet16_ZDC1nAsymXOR_v1"))  Tree->SetBranchAddress("HLT_OxySingleJet16_ZDC1nAsymXOR_v1",  &HLT_OxySingleJet16_ZDC1nAsymXOR_v1);
+   if(Tree->GetBranch("HLT_OxySingleJet16_ZDC1nXOR_v1"))      Tree->SetBranchAddress("HLT_OxySingleJet16_ZDC1nXOR_v1",  &HLT_OxySingleJet16_ZDC1nXOR_v1);
+   if(Tree->GetBranch("HLT_OxySingleJet24_ZDC1nAsymXOR_v1"))  Tree->SetBranchAddress("HLT_OxySingleJet24_ZDC1nAsymXOR_v1",  &HLT_OxySingleJet24_ZDC1nAsymXOR_v1);
+   if(Tree->GetBranch("HLT_OxySingleJet24_ZDC1nXOR_v1"))      Tree->SetBranchAddress("HLT_OxySingleJet24_ZDC1nXOR_v1",  &HLT_OxySingleJet24_ZDC1nXOR_v1);
+   if(Tree->GetBranch("HLT_OxyL1SingleJet20_v1"))             Tree->SetBranchAddress("HLT_OxyL1SingleJet20_v1",  &HLT_OxyL1SingleJet20_v1);
+
    Tree->SetBranchAddress("trkPt", &trkPt);
    Tree->SetBranchAddress("trkPhi", &trkPhi);
    Tree->SetBranchAddress("trkPtError", &trkPtError);
@@ -3975,6 +3998,10 @@ bool ChargedHadronRAATreeMessenger::Initialize(int saveTriggerBits, bool Debug, 
    Tree->SetBranchAddress("trkNormChi2", &trkNormChi2);
    Tree->SetBranchAddress("pfEnergy", &pfEnergy);
    Tree->SetBranchAddress("trackWeight", &trackWeight);
+   Tree->SetBranchAddress("trackingEfficiency2017pp", &trackingEfficiency2017pp);
+   Tree->SetBranchAddress("trackingEfficiency_Nominal", &trackingEfficiency_Nominal);
+   Tree->SetBranchAddress("trackingEfficiency_Loose", &trackingEfficiency_Loose);
+   Tree->SetBranchAddress("trackingEfficiency_Tight", &trackingEfficiency_Tight);
 
    // initialize debug quantities
    AllxVtx = nullptr;
@@ -4108,6 +4135,10 @@ bool ChargedHadronRAATreeMessenger::SetBranch(TTree *T, int saveTriggerBits, boo
    trkNormChi2 = new std::vector<float>();
    pfEnergy = new std::vector<float>();
    trackWeight = new std::vector<float>();
+   trackingEfficiency2017pp = new std::vector<float>();
+   trackingEfficiency_Nominal = new std::vector<float>();
+   trackingEfficiency_Loose = new std::vector<float>();
+   trackingEfficiency_Tight = new std::vector<float>();
 
    Tree = T;
 
@@ -4130,6 +4161,9 @@ bool ChargedHadronRAATreeMessenger::SetBranch(TTree *T, int saveTriggerBits, boo
    Tree->Branch("chi2Vtx",                    &chi2Vtx, "chi2Vtx/F");
    Tree->Branch("ndofVtx",                    &ndofVtx, "ndofVtx/F");
    Tree->Branch("nVtx",                       &nVtx, "nVtx/I");
+   Tree->Branch("nTrk",                       &nTrk, "nTrk/I");
+   Tree->Branch("multiplicityEta2p4",          &multiplicityEta2p4, "multiplicityEta2p4/I");
+   Tree->Branch("multiplicityEta1p0",          &multiplicityEta1p0, "multiplicityEta1p0/I");
    Tree->Branch("HFEMaxPlus",                 &HFEMaxPlus, "HFEMaxPlus/F");
    Tree->Branch("HFEMaxPlus2",                &HFEMaxPlus2, "HFEMaxPlus2/F");
    Tree->Branch("HFEMaxPlus3",                &HFEMaxPlus3, "HFEMaxPlus3/F");
@@ -4159,7 +4193,16 @@ bool ChargedHadronRAATreeMessenger::SetBranch(TTree *T, int saveTriggerBits, boo
    Tree->Branch("passL1HFAND_14_Offline",     &passL1HFAND_14_Offline, "passL1HFAND_14_Offline/O");
    Tree->Branch("passL1HFOR_14_Offline",      &passL1HFOR_14_Offline, "passL1HFOR_14_Offline/O");
    
-   if (saveTriggerBitsMode == 2) { // pO HLT bits
+   if (saveTriggerBitsMode == 1) {        // OO HLT bits 
+      Tree->Branch("HLT_OxySingleJet16_ZDC1nAsymXOR_v1",                         &HLT_OxySingleJet16_ZDC1nAsymXOR_v1, "HLT_OxySingleJet16_ZDC1nAsymXOR_v1/O");
+      Tree->Branch("HLT_OxySingleJet16_ZDC1nXOR_v1",                             &HLT_OxySingleJet16_ZDC1nXOR_v1, "HLT_OxySingleJet16_ZDC1nXOR_v1/O");
+      Tree->Branch("HLT_OxySingleJet24_ZDC1nAsymXOR_v1",                         &HLT_OxySingleJet24_ZDC1nAsymXOR_v1, "HLT_OxySingleJet24_ZDC1nAsymXOR_v1/O");
+      Tree->Branch("HLT_OxySingleJet24_ZDC1nXOR_v1",                             &HLT_OxySingleJet24_ZDC1nXOR_v1, "HLT_OxySingleJet24_ZDC1nXOR_v1/O");
+      Tree->Branch("HLT_OxyZDC1nOR_v1",                                          &HLT_OxyZDC1nOR_v1, "HLT_OxyZDC1nOR_v1/O");
+      Tree->Branch("HLT_OxyZeroBias_v1",                                         &HLT_OxyZeroBias_v1, "HLT_OxyZeroBias_v1/O");
+      Tree->Branch("HLT_MinimumBiasHF_OR_BptxAND_v1",                            &HLT_MinimumBiasHF_OR_BptxAND_v1, "HLT_MinimumBiasHF_OR_BptxAND_v1/O");
+      Tree->Branch("HLT_OxyL1SingleJet20_v1",                                    &HLT_OxyL1SingleJet20_v1, "HLT_OxyL1SingleJet20_v1/O");
+   } else if (saveTriggerBitsMode == 2) { // pO HLT bits
       Tree->Branch("HLT_OxyZeroBias_v1",                                         &HLT_OxyZeroBias_v1, "HLT_OxyZeroBias_v1/O");
       Tree->Branch("HLT_OxyZDC1nOR_v1",                                          &HLT_OxyZDC1nOR_v1, "HLT_OxyZDC1nOR_v1/O");
       Tree->Branch("HLT_OxySingleMuOpen_NotMBHF2OR_v1",                          &HLT_OxySingleMuOpen_NotMBHF2OR_v1, "HLT_OxySingleMuOpen_NotMBHF2OR_v1/O");
@@ -4188,6 +4231,10 @@ bool ChargedHadronRAATreeMessenger::SetBranch(TTree *T, int saveTriggerBits, boo
    Tree->Branch("trkNormChi2",                &trkNormChi2);
    Tree->Branch("pfEnergy",                   &pfEnergy);
    Tree->Branch("trackWeight",                &trackWeight);
+   Tree->Branch("trackingEfficiency2017pp",   &trackingEfficiency2017pp);
+   Tree->Branch("trackingEfficiency_Nominal", &trackingEfficiency_Nominal);
+   Tree->Branch("trackingEfficiency_Loose",   &trackingEfficiency_Loose);
+   Tree->Branch("trackingEfficiency_Tight",   &trackingEfficiency_Tight);
 
    if (DebugMode) {
       // set debug related branches
@@ -4303,6 +4350,9 @@ void ChargedHadronRAATreeMessenger::Clear()
    chi2Vtx = 0.;
    ndofVtx = 0.;
    nVtx = 0;
+   nTrk = 0;
+   multiplicityEta2p4 = 0;
+   multiplicityEta1p0 = 0;
    HFEMaxPlus = -9999.;
    HFEMaxPlus2 = -9999.;
    HFEMaxPlus3 = -9999.;
@@ -4332,7 +4382,16 @@ void ChargedHadronRAATreeMessenger::Clear()
    passL1HFAND_14_Offline = false;
    passL1HFOR_14_Offline = false;
 
-   if (saveTriggerBitsMode == 2) { // pO HLT bits
+   if (saveTriggerBitsMode == 1) { // OO HLT bits
+      HLT_OxySingleJet16_ZDC1nAsymXOR_v1 = false;
+      HLT_OxySingleJet16_ZDC1nXOR_v1 = false;
+      HLT_OxySingleJet24_ZDC1nAsymXOR_v1 = false;
+      HLT_OxySingleJet24_ZDC1nXOR_v1 = false;
+      HLT_OxyZDC1nOR_v1 = false;
+      HLT_OxyZeroBias_v1 = false;
+      HLT_MinimumBiasHF_OR_BptxAND_v1 = false;
+      HLT_OxyL1SingleJet20_v1 = false;
+   } else if (saveTriggerBitsMode == 2) { // pO HLT bits
       HLT_OxyZeroBias_v1 = false;
       HLT_OxyZDC1nOR_v1 = false;
       HLT_OxySingleMuOpen_NotMBHF2OR_v1 = false;
@@ -4361,6 +4420,10 @@ void ChargedHadronRAATreeMessenger::Clear()
    trkNormChi2->clear();
    pfEnergy->clear();
    trackWeight->clear();
+   trackingEfficiency2017pp->clear();
+   trackingEfficiency_Nominal->clear();
+   trackingEfficiency_Loose->clear();
+   trackingEfficiency_Tight->clear();
 
    if (DebugMode) {
       // clear debug related branches
