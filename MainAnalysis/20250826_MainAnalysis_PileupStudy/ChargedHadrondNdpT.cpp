@@ -114,6 +114,8 @@ public:
         Bar.Print();
       }
 
+      //if(MChargedHadronRAA->nVtx != 1){continue;}
+
       //int Run = MChargedHadronRAA->Run;
       //int lumi = MChargedHadronRAA->Lumi;
       //comment out if you want to use our "forest x golden" json
@@ -198,7 +200,6 @@ public:
         hTrkPtNoPartSpecies->Fill(MChargedHadronRAA->trkPt->at(j), partSpeciesWeight / pT);
         hTrkPt->Fill(MChargedHadronRAA->trkPt->at(j), trkWeight * evtWeight * partSpeciesWeight / pT);
         hTrkPtUnweighted->Fill(MChargedHadronRAA->trkPt->at(j), 1.0 / pT);*/
-        
         // Fill partition with track-level information
         float totalWeight = trkWeight * evtWeight * partSpeciesWeight;
         _partition->fill_track(MChargedHadronRAA, totalWeight, j);

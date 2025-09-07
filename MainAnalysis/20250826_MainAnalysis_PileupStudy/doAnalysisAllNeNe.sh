@@ -1,7 +1,6 @@
 #!/bin/bash
 
-
-MODE="output_NeNe"
+MODE="output_NeNe_1vtx"
 ./RunParallelReadParam.sh \
     --Output ${MODE} \
     --Input NeNe_InputFileList.txt \
